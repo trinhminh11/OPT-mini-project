@@ -76,11 +76,8 @@ class Solver:
 	
 
 
-
-
 def main():
-	Nodes, Time_matrix = import_data('test.txt')
-
+	N, Nodes, Time_matrix = import_data('test.txt')
 
 	sol = Solver(Nodes, Time_matrix)
 	sol.solve()
