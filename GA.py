@@ -3,9 +3,7 @@ from CONSTANT import Node, import_data, random_seed
 
 random.seed(random_seed)
 
-#Nodes object represent ID of Node, earliest and latest time to serve and time to delivery package
-
-
+#Individual represent 1 Solution
 class Individual:
 	def __init__(self, Nodes, Time_matrix, chromosome = None):
 
@@ -61,6 +59,7 @@ class Individual:
 		# fitness equal [num serve, runtime]
 		return [len(self.solRoute),  self.solRoute[-1].timeDone]
 	
+	#Crossover
 	def crossover(self, other):
 		choice = random.choice([1, 2, 3])
 		if choice == 1:
@@ -70,7 +69,6 @@ class Individual:
 		else:
 			return self.AEX(other)
 
-		
 	# Order cross over
 	def OX(self, other):
 		mom_chromosome = self.chromosome
@@ -234,9 +232,11 @@ class Individual:
 		temp.reverse()
 		
 		self.chromosome = self.chromosome[:a] + temp + self.chromosome[b:]
-			
+
+#Solution class	
 class GA:
 	def __init__(self, Nodes: list[Node], Time_matrix, n, generations, mutation_rate):
+		#Populations contain n Individual
 		self.populations: list[Individual] = [Individual(Nodes, Time_matrix) for _ in range(n)]
 		self.n = n
 		self.generations = generations
@@ -256,6 +256,7 @@ class GA:
 		iteration = 0
 		max_iteration = 50
 
+		#run for ... generations
 		for generation in range(self.generations):
 			iteration += 1
 			Probs = self.calc_fitness()
@@ -295,12 +296,14 @@ class GA:
 				#update solRoute 
 				child.update_sol()
 
+				#add new gen
 				new_gen.append(Individual(self.Nodes, self.Time_matrix, child_chromosome))
 		
 			self.populations = new_gen
 		
 		
-
+	
+	#calc populations fitness
 	def calc_fitness(self):
 		for indiviudal in self.populations:
 			indiviudal.fitness = indiviudal.calc_fitness()
@@ -323,6 +326,7 @@ class GA:
 		return Probs
 
 	
+	#choose 2 parents base on rank
 	def natural_selection(self, Probs):
 		
 		parent = []
@@ -338,6 +342,7 @@ class GA:
 
 		return parent
 
+	#printing solution
 	def print_sol(self):
 		print(len(self.best_sol.solRoute[1:]))
 		for node in self.best_sol.solRoute[1:]:
