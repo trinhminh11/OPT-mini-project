@@ -34,4 +34,4 @@ def import_data(file):
 		for i in range(N+1):
 			Time_matrix.append(list(map(int, f.readline().split())))
 
-	return N, Nodes, Time_matrix
+	return Nodes, Time_matrix

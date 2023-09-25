@@ -74,14 +74,23 @@ class Solver:
 		for node in self.truck.solRoute[1:]:
 			print(node.ID, end = " ")
 	
+	def export_sol(self, file):
+		with open(file, 'w') as f:
+			f.write(str(len(self.truck.solRoute[1:])))
+			f.write("\n")
+
+			for node in self.truck.solRoute[1:]:
+				f.write(f'{node.ID} ')
+	
 
 
 def main():
-	N, Nodes, Time_matrix = import_data('test.txt')
+	Nodes, Time_matrix = import_data('test.txt')
 
 	sol = Solver(Nodes, Time_matrix)
 	sol.solve()
 	sol.print_sol()
+	sol.export_sol('output.txt')
 
 
 if __name__ == "__main__":

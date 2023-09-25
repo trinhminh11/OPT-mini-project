@@ -347,12 +347,20 @@ class GA:
 		print(len(self.best_sol.solRoute[1:]))
 		for node in self.best_sol.solRoute[1:]:
 			print(node.ID, end = " ")
+	
+	def export_sol(self, file):
+		with open(file, 'w') as f:
+			f.write(str(len(self.best_sol.solRoute[1:])))
+			f.write("\n")
+
+			for node in self.best_sol.solRoute[1:]:
+				f.write(f'{node.ID} ')
 
 
 
 
 def main():
-	N, Nodes, Time_matrix = import_data('test.txt')
+	Nodes, Time_matrix = import_data('test.txt')
 
 	populations_num = 100
 	generations = 100
@@ -363,6 +371,8 @@ def main():
 	sol.solve()
 
 	sol.print_sol()
+
+	sol.export_sol('output.txt')
 
 
 if __name__ == "__main__":
