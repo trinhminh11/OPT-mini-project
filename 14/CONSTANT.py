@@ -1,5 +1,5 @@
 
-
+# class Reviewer represent a reviewer have an ID and list of paper that this reviewer can review
 class Reviewer:
 	def __init__(self, ID):
 		self.ID = ID
@@ -12,11 +12,13 @@ class Reviewer:
 			ans += f'\tPaper {paper.ID}\n'
 		return ans 
 
+# class Paper represent a paper, have an ID and list of reviewers that willing to review this paper
 class Paper:
 	def __init__(self, ID):
 		self.ID = ID
 		self.reviewers: list[Reviewer] = []
 
+		# Solution contain reviewer that actually review this paper
 		self.sol: list[Reviewer] = []
 	
 
