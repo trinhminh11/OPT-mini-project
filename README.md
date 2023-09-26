@@ -1,1 +1,0 @@
-# OPT-mini-project
