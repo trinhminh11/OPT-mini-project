@@ -5,6 +5,15 @@ from CONSTANT import Package, Truck, import_data, random_seed
 random.seed(random_seed)
 
 #Individual represent 1 Solution
+'''
+encode chromosome:
+	- chromosome is a permutation of [1,2,3,..N]
+	- each gene is a Package ID
+decode chromosome:
+	- loop through chromosome, starting with truck 1, keep adding Package until it passing upper bound, then go to next truck
+	- for each truck, if lower_bound <= capcity <= upper_bound. cost is equal total Package.cost
+	- fitness = total cost of all truck 
+'''
 class Individual:
 	def __init__(self, packages: list[Package], trucks: list[Truck], chromosome = None):
 
