@@ -1,15 +1,16 @@
+# Room class, store ID and capacity 
 class Room:
 	def __init__(self, ID, capacity):
 		self.ID = ID
 		self.capacity = capacity
 
-		self.used = 0
-
+# Slot class, store a slot ID (1,2,3,4) and list of rooms used in that slot
 class Slot:
 	def __init__(self, ID):
 		self.ID = ID
 		self.used: list[Room] = []
 
+# Class class, represent a Class, with number of students, list of all Class share the same Course and list of room that can used for the exam
 class Class:
 	def __init__(self, ID, num_student):
 		self.ID = ID
@@ -22,7 +23,7 @@ class Class:
 		self.exam = 0
 		self.slot = 0
 	
-
+#import data
 def import_data(file):
 	classes: list[Class] = []
 	rooms: list[Room] = []
