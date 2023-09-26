@@ -1,63 +1,57 @@
 import random
-from CONSTANT import Node, import_data, random_seed
-
+from CONSTANT import import_data, random_seed
 random.seed(random_seed)
 
-#Individual represent 1 Solution
 class Individual:
-	def __init__(self, Nodes, Time_matrix, chromosome = None):
+	def __init__(self, N, K, distance_matrix: list[list], chromosome = None):
 
+		self.N = N 
+		self.K = K
 		#len of chromosome
-		self.n = len(Nodes[1:])
+		self.n = N + K - 1
 
 		#if chromosome = None, create random solution
 		if chromosome == None:
-			self.chromosome = [i+1 for i in range(len(Nodes[1:]))]
+			self.chromosome = [-i for i in range(K-1)]
+			self.chromosome += [i+1 for i in range(N)]
 			random.shuffle(self.chromosome)
-
+			
 		else:
 			self.chromosome = chromosome
 
-		self.Nodes = Nodes
-		
-		#make solution base on chromosome
-		self.solRoute: list[Node] = [Nodes[0]] + [Nodes[i] for i in self.chromosome]
 
-		self.Time_matrix = Time_matrix
+		self.distance_matrix = distance_matrix
 
 		self.fitness = 0
 
+
 		self.prob = 0
-	
-	#update Route base on chromosome
-	def update_sol(self):
-		self.solRoute: list[Node] = [self.Nodes[0]] + [self.Nodes[i] for i in self.chromosome]
+
 	
 	# calc fitness base on Route
 	def calc_fitness(self):
-		current_time = self.solRoute[0].timeDone
 
-		for i in range(len(self.solRoute)-1):
-			current_time += self.Time_matrix[self.solRoute[i].ID][self.solRoute[i+1].ID]
-			
-			# if we arrived before Time Window, we can wait.
-			if current_time < self.solRoute[i+1].e:
-				current_time = self.solRoute[i+1].e + self.solRoute[i+1].d
-				self.solRoute[i+1].timeDone = current_time
-
-			#if we arrived inside the Time Window 
-			elif self.solRoute[i+1].e <= current_time <= self.solRoute[i+1].l:
-				current_time += self.solRoute[i+1].d
-				self.solRoute[i+1].timeDone = current_time
-			
-			#if we arrived after Time Window, meaning violating the constraint
+		self.Routes = [[] for _ in range(self.K)]
+		index = 0
+		self.Routes[0].append(0)
+		for node in self.chromosome:
+			if node <= 0:			
+				index += 1
+				self.Routes[index].append(0)
 			else:
-				# delete afterward Node and stop
-				self.solRoute = self.solRoute[:i+1]
-				break
+				self.Routes[index].append(node)
+
+
+		fitnesses = [0 for _ in range(self.K)]
+
+		for i, route in enumerate(self.Routes):
+			for j in range(1, len(route)):
+				fitnesses[i] += self.distance_matrix[route[j-1]][route[j]]
+			
 		
-		# fitness equal [num serve, runtime]
-		return [len(self.solRoute),  self.solRoute[-1].timeDone]
+		
+		#total fitness and max fitness
+		return max(fitnesses), sum(fitnesses)
 	
 	#Crossover
 	def crossover(self, other):
@@ -122,8 +116,7 @@ class Individual:
 			
 			return list(set(neighbors))
 
-		neighbors = [set()]
-		neighbors += [find_neighbor(i) for i in range(1, self.n+1)]
+		neighbors = {i: find_neighbor(i) for i in range(-self.K+2, self.N+1)}
 		
 		index = 0
 		child_chromosome = []
@@ -155,9 +148,10 @@ class Individual:
 		mom_chromosome: list =  self.chromosome
 		dad_chromosome: list = other.chromosome
 		child_chromosome = []
-		visited = [False for i in range(self.n+1)]
 
-		visited[0] = True
+		visited = {i: False for i in range(-self.K+1, self.N+1)}
+
+		visited[-self.K+1] = True
 
 		current = mom_chromosome
 
@@ -176,20 +170,19 @@ class Individual:
 			index = current.index(gene) + 1
 
 			if index >= self.n:
-				for i in range(len(visited)):
+				for i in range(-self.K+1, self.N+1):
 					if visited[i] == False:
 						index = current.index(i)
 						break
 			
 			elif visited[current[index]] == True:
-				for i in range(len(visited)):
+				for i in range(-self.K+1, self.N+1):
 					if visited[i] == False:
 						index = current.index(i)
 						break
 		
 		return child_chromosome
 	
-
 	#mutation
 	def mutation(self, rate):
 		if random.random() < rate:
@@ -235,14 +228,15 @@ class Individual:
 
 #Solution class	
 class GA:
-	def __init__(self, Nodes: list[Node], Time_matrix, n, generations, mutation_rate):
+	def __init__(self, N, K, distance_matrix: list[list], n, generations, mutation_rate):
 		#Populations contain n Individual
-		self.populations: list[Individual] = [Individual(Nodes, Time_matrix) for _ in range(n)]
+		self.populations: list[Individual] = [Individual(N, K, distance_matrix) for _ in range(n)]
 		self.n = n
 		self.generations = generations
-		self.Nodes = Nodes
-		self.Time_matrix = Time_matrix
+		self.distance_matrix = distance_matrix
 		self.mutation_rate = mutation_rate
+		self.N = N
+		self.K = K
 	
 	def solve(self):
 
@@ -262,19 +256,14 @@ class GA:
 			Probs = self.calc_fitness()
 
 			# if populations[-1] number of serve is better than best sol, update best sol
-			if self.populations[-1].fitness[0] > self.best_sol.fitness[0]:
+			if   self.populations[-1].fitness < self.best_sol.fitness:
 				self.best_sol = self.populations[-1]
 
 				iteration = 0
 
-			# if populations[-1] and best sol have the same number of serve, update best sol if populations[-1] have less runtime than best sol
-			elif self.populations[-1].fitness[0] == self.best_sol.fitness[0]:
-				if self.populations[-1].fitness[1] < self.best_sol.fitness[1]:
-					self.best_sol = self.populations[-1]
-					iteration = 0
 			
 			# early stopping
-			if self.best_sol.fitness[0] == len(self.Nodes) and iteration > max_iteration:
+			if iteration > max_iteration:
 				break
 
 			new_gen = []
@@ -288,16 +277,14 @@ class GA:
 				# cross over
 				child_chromosome = parent[0].crossover(parent[1])
 
-				child = Individual(self.Nodes, self.Time_matrix, child_chromosome)
+				child = Individual(self.N, self.K, self.distance_matrix, child_chromosome)
 
 				#mutation
 				child.mutation(self.mutation_rate)
 
-				#update solRoute 
-				child.update_sol()
 
 				#add new gen
-				new_gen.append(Individual(self.Nodes, self.Time_matrix, child_chromosome))
+				new_gen.append(child)
 		
 			self.populations = new_gen
 		
@@ -308,8 +295,8 @@ class GA:
 		for indiviudal in self.populations:
 			indiviudal.fitness = indiviudal.calc_fitness()
 
-		#sort in increasing order of number of served and -runtime
-		self.populations.sort(key=lambda x: [x.fitness[0], -x.fitness[1]])
+		#sort in decreasing order of fitness
+		self.populations.sort(reverse=True, key= lambda x: x.fitness)
 
 		#rank selection
 		sp = 1.2
@@ -319,7 +306,6 @@ class GA:
 		for i, individual in enumerate(self.populations):
 			individual.prob = Probs[i]
 		
-
 		for i in range(1, len(Probs)):
 			Probs[i] += Probs[i-1]
 			
@@ -344,36 +330,40 @@ class GA:
 
 	#printing solution
 	def print_sol(self):
-		print(len(self.best_sol.solRoute[1:]))
-		for node in self.best_sol.solRoute[1:]:
-			print(node.ID, end = " ")
-	
+		print(self.K)
+		for truck in range(self.K):
+			print(len(self.best_sol.Routes[truck]))
+			print(*self.best_sol.Routes[truck])
+
 	def export_sol(self, file):
 		with open(file, 'w') as f:
-			f.write(str(len(self.best_sol.solRoute[1:])))
-			f.write("\n")
+			f.write(str(self.K) + "\n")
 
-			for node in self.best_sol.solRoute[1:]:
-				f.write(f'{node.ID} ')
+			for truck in range(self.K):
+				f.write(str(len(self.best_sol.Routes[truck])) + "\n")
 
+				for node in self.best_sol.Routes[truck]:
+					f.write(str(node) + " ")
+				
+				f.write("\n")
 
 
 
 def main():
-	Nodes, Time_matrix = import_data('test.txt')
+	N, K, distance_matrix = import_data('11/test.txt')
 
-	populations_num = 100
+	populations_num = 1000
 	generations = 100
 	mutation_rate = 0.1
 
-	sol = GA(Nodes, Time_matrix, populations_num, generations, mutation_rate)
+	sol = GA(N, K, distance_matrix, populations_num, generations, mutation_rate)
 
 	sol.solve()
 
 	sol.print_sol()
 
-	sol.export_sol('output.txt')
-
+	sol.export_sol('11/output.txt')
+	
 
 if __name__ == "__main__":
 	main()
