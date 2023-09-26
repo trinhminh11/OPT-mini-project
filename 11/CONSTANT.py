@@ -1,6 +1,6 @@
 random_seed = 11042004
 
-
+#import data
 def import_data(file):
     distance_matrix = []
     with open(file, 'r') as f:

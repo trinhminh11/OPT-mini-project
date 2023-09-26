@@ -2,6 +2,17 @@ import random
 from CONSTANT import import_data, random_seed
 random.seed(random_seed)
 
+'''
+encode chromosome:
+	- chromosome is a permutation of [-K+1, -K+2, ..., 0, 1, 2, .., N], length of K + N
+	- where [-K+1, -K+2, .., 0] represent truck and [1,2,3,..., N] represent Node
+	or gene <= 0 represent truck and gene > 0 represent Node
+	- note that chromosome allways start at -K+1 so in the actual code,
+	chromosome is a permutation of [-K+2, -K+3, ..., 0, 1, 2, ..., N] length of K + N - 1
+decode chromosome:
+	- loop through chromosome, when gene <= 0 that mean we go to next truck and all node > 0 after that is the Route of that truck
+'''
+
 class Individual:
 	def __init__(self, N, K, distance_matrix: list[list], chromosome = None):
 
@@ -31,19 +42,25 @@ class Individual:
 	# calc fitness base on Route
 	def calc_fitness(self):
 
+		# Routes i represent truck {i+1} Route
 		self.Routes = [[] for _ in range(self.K)]
+
+		# start at the first truck
 		index = 0
 		self.Routes[0].append(0)
-		for node in self.chromosome:
-			if node <= 0:			
+
+		for gene in self.chromosome:
+			#if gene <= 0, go to next truck
+			if gene <= 0:			
 				index += 1
+				#truck allways start at index 0
 				self.Routes[index].append(0)
 			else:
-				self.Routes[index].append(node)
+				self.Routes[index].append(gene)
 
 
+		#fitness i represent cost of truck {i+1}
 		fitnesses = [0 for _ in range(self.K)]
-
 		for i, route in enumerate(self.Routes):
 			for j in range(1, len(route)):
 				fitnesses[i] += self.distance_matrix[route[j-1]][route[j]]
@@ -255,7 +272,7 @@ class GA:
 			iteration += 1
 			Probs = self.calc_fitness()
 
-			# if populations[-1] number of serve is better than best sol, update best sol
+			# if populations[-1] fitness is smaller than best sol, update best sol
 			if   self.populations[-1].fitness < self.best_sol.fitness:
 				self.best_sol = self.populations[-1]
 
@@ -282,7 +299,6 @@ class GA:
 				#mutation
 				child.mutation(self.mutation_rate)
 
-
 				#add new gen
 				new_gen.append(child)
 		
@@ -292,10 +308,11 @@ class GA:
 	
 	#calc populations fitness
 	def calc_fitness(self):
+		#calc fitness for each individual
 		for indiviudal in self.populations:
 			indiviudal.fitness = indiviudal.calc_fitness()
 
-		#sort in decreasing order of fitness
+		#sort in decreasing order of fitness, best fitness at lass
 		self.populations.sort(reverse=True, key= lambda x: x.fitness)
 
 		#rank selection
@@ -335,6 +352,7 @@ class GA:
 			print(len(self.best_sol.Routes[truck]))
 			print(*self.best_sol.Routes[truck])
 
+	#exporting solution
 	def export_sol(self, file):
 		with open(file, 'w') as f:
 			f.write(str(self.K) + "\n")
