@@ -27,7 +27,9 @@ class Truck:
 				return False
 		
 		return True
+	
 
+	# find best index to insert a node to route
 	def Insert(self, node: Node):
 		temp_Route: list[Node] = self.solRoute.copy()
 		best_Route: list[Node] = self.solRoute.copy()
@@ -85,12 +87,12 @@ class Solver:
 
 
 def main():
-	Nodes, Time_matrix = import_data('test.txt')
+	Nodes, Time_matrix = import_data('12/test.txt')
 
 	sol = Solver(Nodes, Time_matrix)
 	sol.solve()
 	sol.print_sol()
-	sol.export_sol('output.txt')
+	sol.export_sol('12/output.txt')
 
 
 if __name__ == "__main__":

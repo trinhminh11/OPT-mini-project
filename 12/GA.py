@@ -3,9 +3,14 @@ from CONSTANT import Node, import_data, random_seed
 
 random.seed(random_seed)
 
-#Individual represent 1 Solution
+'''
+encode chromosome:
+	- chromosome is a permutaion of [1,2,3,...,N]
+decode chromosome:
+	- start at node 0 and go thorgh chromosome, each gene in chromosome represent a node in Route
+'''
 class Individual:
-	def __init__(self, Nodes, Time_matrix, chromosome = None):
+	def __init__(self, Nodes: list[Node], Time_matrix, chromosome = None):
 
 		#len of chromosome
 		self.n = len(Nodes[1:])
