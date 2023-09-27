@@ -1,6 +1,6 @@
 
 
-# class Class represent a class, contain ID, t: number of lessons, g: teacher ID, s: number of student
+# class Class represent a class, contain ID, t: number of preiods, g: teacher ID, s: number of student
 class Class:
 	def __init__(self, ID, t, g, s):
 		self.ID = ID
@@ -15,7 +15,7 @@ class Class:
 	
 	# print for debug
 	def __str__(self):
-		return f'class {self.ID}, lessons: {self.t}, teach by {self.g}, number of student {self.s}'
+		return f'class {self.ID}, preiods: {self.t}, teach by {self.g}, number of student {self.s}'
 
 # class Room represent a Room, contain ID and capacity
 class Room:
