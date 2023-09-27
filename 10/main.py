@@ -35,10 +35,11 @@ class Solver:
 			for slot in range(1, 61):
 				for room in c.rooms:
 					check = True
+
+					if slot + c.t > 61:
+						continue
+
 					for preiod in range(slot, slot + c.t):
-						if preiod > 60:
-							check = False
-							break
 						if room.used[preiod] == True or self.teachers[c.g].used[preiod]:
 							check = False 
 							break
