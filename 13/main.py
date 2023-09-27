@@ -68,7 +68,10 @@ class Solver:
 	
 
 def main():
-	classes, rooms = import_data("13/test.txt")
+	try:
+		classes, rooms = import_data("13/test.txt")
+	except:
+		classes, rooms = import_data("test.txt")
 
 	sol = Solver(classes, rooms)
 
@@ -76,7 +79,10 @@ def main():
 
 	sol.print_sol()
 
-	sol.export_sol('13/output.txt')
+	try:
+		sol.export_sol('13/output.txt')
+	except:
+		sol.export_sol('output.txt')
 
 	
 

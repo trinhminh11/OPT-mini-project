@@ -24,7 +24,10 @@ class Solver:
 				f.write(str(Node) + " ")
 
 def main():
-	truck, passengers = import_data('7/test.txt')
+	try:
+		truck, passengers = import_data('7/test.txt')
+	except:
+		truck, passengers = import_data('test.txt')
 	
 	sol = Solver(truck, passengers)
 
@@ -32,7 +35,10 @@ def main():
 
 	sol.print_sol()
 
-	sol.export_sol("7/output.txt")
+	try:
+		sol.export_sol("7/output.txt")
+	except:
+		sol.export_sol("output.txt")
 
 if __name__ == "__main__":
 	main()

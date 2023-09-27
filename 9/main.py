@@ -113,7 +113,10 @@ class Solver:
 
 
 def main():
-	boxes, containers = import_data("9/test.txt")
+	try:
+		boxes, containers = import_data("9/test.txt")
+	except:
+		boxes, containers = import_data("test.txt")
 	
 	sol = Solver(boxes, containers)
 
@@ -121,7 +124,10 @@ def main():
 
 	sol.print_sol()
 
-	sol.export_sol('9/output.txt')
+	try:
+		sol.export_sol('9/output.txt')
+	except:
+		sol.export_sol("output.txt")
 
 
 if __name__ == "__main__":

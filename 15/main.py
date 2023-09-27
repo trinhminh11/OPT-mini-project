@@ -365,7 +365,11 @@ class GA:
 				f.write(f'{package.ID} {package.truck_used.ID}\n')
 
 def main():
-	packages, trucks = import_data('15/test.txt')
+	try:
+		packages, trucks = import_data('15/test.txt')
+	except:
+		packages, trucks = import_data('15/test.txt')
+		
 	trucks.sort(key = lambda x: x.lower_bound + (x.upper_bound - x.lower_bound)/2)
 	n = 100
 	generations = 100
@@ -378,7 +382,10 @@ def main():
 	sol.solve()
 	sol.print_sol()
 
-	sol.export_sol('15/output.txt')
+	try:
+		sol.export_sol('15/output.txt')
+	except:
+		sol.export_sol('output.txt')
 
 
 

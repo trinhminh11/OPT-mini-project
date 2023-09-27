@@ -86,7 +86,10 @@ class Solver:
 
 
 def main():
-	classes, teachers, subjects = import_data('8/test.txt')
+	try:
+		classes, teachers, subjects = import_data('8/test.txt')
+	except:
+		classes, teachers, subjects = import_data('test.txt')
 	
 	sol = Solver(classes, teachers, subjects)
 
@@ -94,7 +97,10 @@ def main():
 
 	sol.print_sol()
 
-	sol.export_sol("8/output.txt")
+	try:
+		sol.export_sol("8/output.txt")
+	except:
+		sol.export_sol("output.txt")
 
 if __name__ == "__main__":
 	main()

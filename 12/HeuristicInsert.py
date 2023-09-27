@@ -87,12 +87,21 @@ class Solver:
 
 
 def main():
-	Nodes, Time_matrix = import_data('12/test.txt')
+	try:
+		Nodes, Time_matrix = import_data('12/test.txt')
+	except:
+		Nodes, Time_matrix = import_data('test.txt')
 
 	sol = Solver(Nodes, Time_matrix)
+
 	sol.solve()
+
 	sol.print_sol()
-	sol.export_sol('12/output.txt')
+
+	try:
+		sol.export_sol('12/output.txt')
+	except:
+		sol.export_sol('output.txt')
 
 
 if __name__ == "__main__":

@@ -368,9 +368,12 @@ class GA:
 
 
 def main():
-	N, K, distance_matrix = import_data('11/test.txt')
+	try:
+		N, K, distance_matrix = import_data('11/test.txt')
+	except:
+		N, K, distance_matrix = import_data('test.txt')
 
-	populations_num = 1000
+	populations_num = 100
 	generations = 100
 	mutation_rate = 0.1
 
@@ -379,9 +382,10 @@ def main():
 	sol.solve()
 
 	sol.print_sol()
-
-	sol.export_sol('11/output.txt')
-	
+	try:
+		sol.export_sol('11/output.txt')
+	except:
+		sol.export_sol('output.txt')
 
 if __name__ == "__main__":
 	main()

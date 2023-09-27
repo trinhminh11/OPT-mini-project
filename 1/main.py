@@ -117,16 +117,20 @@ class Solver:
 
 def main():
 	#staff, D: number of Day, each slot in each day have at least A Staff and at most B staff
-	staff, D, A, B = import_data('1//test.txt')
+	try:
+		staff, D, A, B = import_data('1/test.txt')
+	except:
+		staff, D, A, B = import_data('test.txt')
 
 	sol = Solver(staff, D, A, B)
 
-	for person in staff:
-		print(person)
-
 	sol.solve()
 	sol.print_sol()
-	sol.export('1/output.txt')
+
+	try:
+		sol.export('1/output.txt')
+	except:
+		sol.export('output.txt')
 
 
 if __name__ == "__main__":
