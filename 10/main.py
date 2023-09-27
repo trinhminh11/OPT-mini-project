@@ -35,6 +35,7 @@ class Solver:
 			for slot in range(1, 61):
 				if slot + c.t > 61:
 					continue
+				
 				for room in c.rooms:
 					check = True
 					for preiod in range(slot, slot + c.t):
