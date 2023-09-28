@@ -9,6 +9,8 @@ Mapped for class 144217 to 144218:
   <br>
   3 -> 9
   <br>
+  4 -> 4
+  <br>
   8 -> 13
   <br>
   9 -> 5
