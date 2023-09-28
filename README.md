@@ -1,6 +1,6 @@
 # OPT-mini-project
 
-This is the folder to solve all Mini-Project for the fundamental optimizations class 144218 <br>
+This is the folder to solve all Mini-Projects for the fundamental optimizations class 144218 <br>
 Mapped for class 144217 to 144218:
   <br>
   1=13 -> 11
@@ -32,4 +32,6 @@ Mapped for class 144217 to 144218:
   24 = 25 -> 3
   <br>
   26 -> 6
+
+  Note that not all Problems in class 144218 are the same as in class 144217, please check carefully.
   
