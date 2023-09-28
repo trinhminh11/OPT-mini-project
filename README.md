@@ -35,5 +35,4 @@ Mapped for class 144217 to 144218:
 
   Note that not all Problems in class 144218 are the same as in class 144217, please check carefully.
 
-  All solutions just use some basic Heuristic Algorithm and GA, not the exact or optimal Solution. Use to reference only
-
+  All solutions just use some basic Heuristic Algorithm and GA. Most of them are not exact or maybe not even close to the optimal solutions, some of them are indeed exact Algorithms but need to be proven. Use for reference only
