@@ -191,15 +191,20 @@ class GA:
 		
 
 def main():
-	trucks, packages = import_data('2/test.txt')
+	try:
+		trucks, packages = import_data('2/test.txt')
+	except:
+		trucks, packages = import_data('test.txt')
 
 	sol = GA(trucks, packages, 100, 100, 0.1)
 
 	sol.solve()
 
 	sol.print_sol()
-
-	sol.export_sol('2/output.txt')
+	try:
+		sol.export_sol('2/output.txt')
+	except:
+		sol.export_sol('output.txt')
 
 
 if __name__ == "__main__":
