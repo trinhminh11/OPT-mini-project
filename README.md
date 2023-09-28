@@ -34,4 +34,6 @@ Mapped for class 144217 to 144218:
   26 -> 6
 
   Note that not all Problems in class 144218 are the same as in class 144217, please check carefully.
-  
+
+  All solutions just use some basic Heuristic Algorithm and GA, not the exact or optimal Solution. Use to reference only
+
