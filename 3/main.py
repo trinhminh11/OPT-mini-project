@@ -21,18 +21,18 @@ class Solver:
 		self.tasks = tasks
 		self.workers = workers
 	
-	# calc breadth for each task
-	def calc_breadth(self):
+	# calc size for each task
+	def calc_size(self):
 		self.tasks.sort(key=lambda x: x.depth)
 
 		for task in self.tasks[::-1]:            
 			for t in task.prev:
-				t.breadth += task.breadth
+				t.size += task.size
 	
 	# main solve function
 	def solve(self):
-		self.calc_breadth()
-		self.tasks.sort(key= lambda x: [x.depth, -x.breadth])
+		self.calc_size()
+		self.tasks.sort(key= lambda x: [x.depth, -x.size])
 		self.workers.sort(key= lambda x: x.start)
 
 		for task in self.tasks:

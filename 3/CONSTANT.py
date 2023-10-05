@@ -6,7 +6,7 @@ class Task:
 		self.prev: list[Task] = []
 		self.next: list[Task] = []
 		self.duration = 0
-		self.breadth = 1
+		self.size = 1
 
 		# TimeDone
 		self.timeDone = -1
@@ -21,7 +21,7 @@ class Task:
 	
 	# print for debug
 	def __str__(self):
-		return f'Task {self.ID}, depth = {self.depth}, breadth = {self.breadth}'
+		return f'Task {self.ID}, depth = {self.depth}, size = {self.size}'
 
 class Worker:
 	def __init__(self, ID):
