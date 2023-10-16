@@ -46,7 +46,7 @@ class Solver:
 						check = True	
 
 						for preiod in range(slot, slot + self.subjects[subject]):
-							if teacher.used[preiod] == True:
+							if teacher.used[preiod] or c.used[preiod]:
 								check = False 
 								break
 						
@@ -55,6 +55,7 @@ class Solver:
 
 							for preiod in range(slot, slot + self.subjects[subject]):
 								teacher.used[preiod] = True
+								c.used[preiod] = True
 
 							break
 					

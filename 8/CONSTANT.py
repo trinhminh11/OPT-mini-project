@@ -30,7 +30,12 @@ class Class:
 		self.teachers: dict[int, list[Teacher]] = {subject: [] for subject in self.subjects}
 
 		self.sol: dict[int, list[int]] = {subject: [] for subject in self.subjects}
-	
+
+		self.sol_subject: dict[int, list[int]] = {s: 0 for s in subjects}
+
+		self.used = {i: False for i in range(1, 61)}
+
+
 	# print for debug
 	def __str__(self):
 		ans = f'Class: {self.ID}, subjects = ['
