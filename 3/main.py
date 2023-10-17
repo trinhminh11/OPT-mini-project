@@ -81,38 +81,47 @@ class Solver:
 							break
 				
 	def print_sol(self):
-		print(len(self.tasks))
+		total = 0
+		ans = ""
 
 		sol = [[] for _ in range(len(self.tasks))]
 
-		for woker in self.workers:
-			if len(woker.works_flow) > 1:
-				for task, time_window in woker.works.items():
-					sol[task.ID-1] = [task.ID, woker.ID, time_window[0]]
+		for worker in self.workers:
+			if len(worker.works_flow) > 1:
+				for task, time_window in worker.works.items():
+					sol[task.ID-1] = [task.ID, worker.ID, time_window[0]]
 		
 		for s in sol:
-			print(*s)
+			if s:
+				ans += f'{s[0]} {s[1]} {s[2]}\n'
+				total += 1
+		
+		print(total)
+		print(ans)
 	
 	def export_sol(self, file):
+		total = 0
+		ans = ""
+		sol = [[] for _ in range(len(self.tasks))]
+
+		for worker in self.workers:
+			if len(worker.works_flow) > 1:
+				for task, time_window in worker.works.items():
+					sol[task.ID-1] = [task.ID, worker.ID, time_window[0]]
+		
+		for s in sol:
+			if s:
+				ans += f'{s[0]} {s[1]} {s[2]}\n'
+				total += 1
 		with open(file, 'w') as f:
-			f.write(f'{len(self.tasks)}\n')
-
-			sol = [[] for _ in range(len(self.tasks))]
-
-			for woker in self.workers:
-				if len(woker.works_flow) > 1:
-					for task, time_window in woker.works.items():
-						sol[task.ID-1] = [task.ID, woker.ID, time_window[0]]
+			f.write(str(total) + "\n")
+			f.write(ans)
 			
-			for s in sol:
-				f.write(f'{s[0]} {s[1]} {s[2]}\n')
 
 
-def main():
-	try:
-		tasks, workers = import_data("3/test.txt")
-	except:
-		tasks, workers = import_data('test.txt')
+
+def main(inp, out):
+	tasks, workers = import_data(inp)
 
 	sol = Solver(tasks, workers)
 
@@ -120,12 +129,12 @@ def main():
 
 	sol.print_sol()
 
-	try:
-		sol.export_sol('3/output.txt')
-	except:
-		sol.export_sol('output.txt')
+	sol.export_sol(out)
 
 
 
 if __name__ == "__main__":
-	main()
+	test_case = 5
+	inp = f'input//{test_case}.txt'
+	out = f'output//{test_case}.txt'
+	main(inp, out)
