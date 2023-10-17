@@ -351,29 +351,39 @@ class GA:
 
 	#printing solution
 	def print_sol(self):
-
+		total = 0
+		ans = ""
 		for package in self.best_sol.packages:
-			print(package.ID, package.truck_used.ID)
+			if package.truck_used.ID:
+
+				ans += f'{package.ID} {package.truck_used.ID}\n'
+				total += 1
+		
+		print(total)
+		print(ans)
 		
 
 	
 	def export_sol(self, file):
-		
+		total = 0
+		ans = ""
+		for package in self.best_sol.packages:
+			if package.truck_used.ID:
+
+				ans += f'{package.ID} {package.truck_used.ID}\n'
+				total += 1
 
 		with open(file, 'w') as f:
-			for package in self.best_sol.packages:
-				f.write(f'{package.ID} {package.truck_used.ID}\n')
+			f.write(f'{total}\n')
+			f.write(ans)
 
-def main():
-	try:
-		packages, trucks = import_data('15/test.txt')
-	except:
-		packages, trucks = import_data('15/test.txt')
+def main(inp, out):
+	packages, trucks = import_data(inp)
 		
 	trucks.sort(key = lambda x: x.lower_bound + (x.upper_bound - x.lower_bound)/2)
 	n = 100
 	generations = 100
-	mutation_rate = 0.1
+	mutation_rate = 0.01
 
 
 
@@ -382,12 +392,12 @@ def main():
 	sol.solve()
 	sol.print_sol()
 
-	try:
-		sol.export_sol('15/output.txt')
-	except:
-		sol.export_sol('output.txt')
+	sol.export_sol(out)
 
 
 
 if __name__ == "__main__":
-	main()
+	test_case = 5
+	inp = f'test.txt'
+	out = f'output.txt'
+	main(inp, out)
