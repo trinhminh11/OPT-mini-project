@@ -32,11 +32,10 @@ class Solver:
 	# main solve function
 	def solve(self):
 		self.calc_size()
-		self.tasks.sort(key= lambda x: [x.depth, -x.size])
-		self.workers.sort(key= lambda x: x.start)
+		self.tasks.sort(key= lambda x: [x.depth, -x.size, len(x.next)])
 
 		for task in self.tasks:
-			self.workers.sort(key= lambda x: x.works_flow[-1][-1])
+			self.workers.sort(key= lambda x: [x.works_flow[-1][-1], x.cost_tasks[task.ID-1]])
 			
 			# if depth of task is 1, just add the worker has minimum works_flow[-1][-1] that can work on this task
 			if task.depth == 1:
@@ -134,7 +133,6 @@ def main(inp, out):
 
 
 if __name__ == "__main__":
-	test_case = 5
-	inp = f'input//{test_case}.txt'
-	out = f'output//{test_case}.txt'
+	inp = f'test.txt'
+	out = f'output.txt'
 	main(inp, out)
