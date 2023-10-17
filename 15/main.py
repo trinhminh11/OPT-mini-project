@@ -397,7 +397,6 @@ def main(inp, out):
 
 
 if __name__ == "__main__":
-	test_case = 5
 	inp = f'test.txt'
 	out = f'output.txt'
 	main(inp, out)
