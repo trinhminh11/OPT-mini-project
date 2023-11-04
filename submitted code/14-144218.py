@@ -29,7 +29,7 @@ class Paper:
 			ans += f'\tReviewer {reviewer.ID}\n'
 		return ans 
 
-def import_data(file):
+def import_data():
 	papers = []
 	reviewers = []
 	N, M, b = map(int, input().split())
@@ -94,8 +94,8 @@ class Solver:
 				print(reviewer.ID, end = " ")
 			print()
 
-def main(inp, out):
-	papers, reviewers, b = import_data(inp)
+def main():
+	papers, reviewers, b = import_data()
 
 	sol = Solver(papers, reviewers, b)
 	sol.solve()
@@ -105,7 +105,4 @@ def main(inp, out):
 	# sol.export_sol(out)
 
 if __name__ == "__main__":
-	test_case = 5
-	inp = f'input//{test_case}.txt'
-	out = f'output//{test_case}.txt'
-	main(inp, out)
+	main()
