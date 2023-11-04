@@ -82,16 +82,17 @@ class Solver:
 	# printing solution
 	def print_sol(self):
 		count = {}
-
+		print(len(self.papers))
 		for paper in self.papers:
+			print(self.b, end = " ")
 			for reviewer in paper.sol:
 				if reviewer.ID in count.keys():
 					count[reviewer.ID] += 1
 				else:
 					count[reviewer.ID] = 1
-
-		print(max(count.values()))
-
+				
+				print(reviewer.ID, end = " ")
+			print()
 
 def main():
 	papers, reviewers, b = import_data()
@@ -101,6 +102,7 @@ def main():
 
 	sol.print_sol()
 
+	# sol.export_sol(out)
 
 if __name__ == "__main__":
 	main()
