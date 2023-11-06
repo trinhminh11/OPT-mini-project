@@ -130,7 +130,6 @@ class Individual:
 		neighbors = [set()]
 		neighbors += [find_neighbor(i) for i in range(1, self.n+1)]
 		
-		index = 0
 		child_chromosome = []
 		gene = mom_chromosome[0]
 		while len(child_chromosome) < self.n:
@@ -371,7 +370,7 @@ def main():
 
 	populations_num = 100
 	generations = 100
-	mutation_rate = 0.1
+	mutation_rate = 0.01
 
 	sol = GA(Nodes, Time_matrix, populations_num, generations, mutation_rate)
 

@@ -18,7 +18,7 @@ class Node:
 #import data from file
 def import_data(file):
 	#list contains Nodes object, Nodes[0] represent starting location
-	Nodes: list[Node] = [Node(0, 0, 0, 0)]
+	Nodes: list[Node] = [Node(0, 0, 28800, 0)]
 	Time_matrix: list[list[int]] = []
 	with open(file, 'r') as f:
 

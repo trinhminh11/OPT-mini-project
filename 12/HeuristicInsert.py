@@ -1,16 +1,52 @@
-from CONSTANT import Node, import_data
+random_seed = 11042004
+
+#Nodes object represent ID of Node, earliest and latest time to serve and time to delivery package
+class Node:
+	def __init__(self, ID, e, l, d):
+		self.ID = ID
+		self.e = e
+		self.l = l
+		self.d = d
+
+		#time after delivery package
+		self.timeDone = 0
+	
+	#printing for debug
+	def __str__(self):
+		return f'ID: {self.ID}, e: {self.e}, l: {self.l}, d: {self.d}, timeDone: {self.timeDone}.'
+	
+#import data from file
+def import_data():
+	#list contains Nodes object, Nodes[0] represent starting location
+	Nodes = [Node(0, 0, float('inf'), 0)]
+	time_matrix = []
+
+	#number of Node
+	N = int(input())
+
+	#get Node info
+	for i in range(N):
+		e, l, d = map(int, input().split())
+		Nodes.append(Node(i+1, e, l, d))
+	
+	#get time matrix info
+	for i in range(N+1):
+		time_matrix.append(list(map(int, input().split())))
+
+    # return Nodes and Time matrix
+	return Nodes, time_matrix
 
 
 class Truck:
-	def __init__(self, Time_matrix):
-		self.solRoute: list[Node] = []    
-		self.Time_matrix: list[list] = Time_matrix
+	def __init__(self, time_matrix):
+		self.solRoute = []    
+		self.time_matrix = time_matrix
 
-	def check_constraint(self, Route: list[Node]):
+	def check_constraint(self, Route):
 		current_time = Route[0].timeDone
 
 		for i in range(len(Route)-1):
-			current_time += self.Time_matrix[Route[i].ID][Route[i+1].ID]
+			current_time += self.time_matrix[Route[i].ID][Route[i+1].ID]
 			
 			# if we arrived before Time Window, we'll wait.
 			if current_time < Route[i+1].e:
@@ -30,9 +66,9 @@ class Truck:
 	
 
 	# find best index to insert a node to route
-	def Insert(self, node: Node):
-		temp_Route: list[Node] = self.solRoute.copy()
-		best_Route: list[Node] = self.solRoute.copy()
+	def Insert(self, node):
+		temp_Route = self.solRoute.copy()
+		best_Route = self.solRoute.copy()
 		best_time = float('inf')
 
 		for i in range(1, len(self.solRoute)+1):
@@ -59,10 +95,10 @@ class Truck:
 			
 
 class Solver:
-	def __init__(self, Nodes, Time_matrix):
-		self.Nodes: list[Node] = Nodes[1:]
-		self.Time_matrix: list[list] = Time_matrix
-		self.truck = Truck(Time_matrix)
+	def __init__(self, Nodes, time_matrix):
+		self.Nodes = Nodes[1:]
+		self.time_matrix = time_matrix
+		self.truck = Truck(time_matrix)
 		self.truck.solRoute.append(Nodes[0])
 
 	
@@ -87,21 +123,18 @@ class Solver:
 
 
 def main():
-	try:
-		Nodes, Time_matrix = import_data('12/test.txt')
-	except:
-		Nodes, Time_matrix = import_data('test.txt')
+	Nodes, time_matrix = import_data()
 
-	sol = Solver(Nodes, Time_matrix)
+	sol = Solver(Nodes, time_matrix)
 
 	sol.solve()
 
 	sol.print_sol()
 
-	try:
-		sol.export_sol('12/output.txt')
-	except:
-		sol.export_sol('output.txt')
+	# try:
+	# 	sol.export_sol('12/output.txt')
+	# except:
+	# 	sol.export_sol('output.txt')
 
 
 if __name__ == "__main__":
