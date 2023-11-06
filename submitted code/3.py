@@ -150,7 +150,7 @@ class Solver:
 	# main solve function
 	def solve(self):
 		self.calc_size()
-		self.tasks.sort(key= lambda x: [x.depth, -x.size, len(x.next)])
+		self.tasks.sort(key= lambda x: [x.depth])
 
 		# for task in self.tasks:
 		# 	print(task.ID, task.depth)
@@ -176,8 +176,6 @@ class Solver:
 				# calc max time of all task.prev
 				max_time = -1
 				for t in task.prev:
-					# if task.ID == 638 and t.ID == 127:
-					# 	print(t.timeDone, t.depth)
 
 					if t.timeDone > max_time:
 						max_time = t.timeDone
@@ -188,18 +186,16 @@ class Solver:
 
 				for worker in self.workers:
 					if worker.works_flow[-1][-1] <= max_time:
-						if worker.cost_tasks[task.ID-1] != -1:
-							if worker.cost_tasks[task.ID-1] < best_cost:
-								best_worker = worker
-								best_cost = worker.cost_tasks[task.ID-1]
+						if worker.cost_tasks[task.ID-1] != -1 and worker.cost_tasks[task.ID-1] < best_cost:
+							best_cost = worker.cost_tasks[task.ID-1]
+							best_worker = worker
+					else:
+						break
 				
-				# if we have worker can work on this task and works_flow[-1][-1] <= max_time
 				if best_cost < float('inf'):
 					best_worker.works[task] = [max_time, max_time + task.duration]
 					task.timeDone = max_time + task.duration
 					best_worker.calc_work_flow()
-				
-				# if all worker can work on this task have works_flow[-1][-1] > max_time
 				else:
 					for worker in self.workers:
 						if worker.cost_tasks[task.ID-1] != -1:
@@ -232,14 +228,11 @@ class Solver:
 def main():
 	tasks, workers = import_data()
 
-
 	sol = Solver(tasks, workers)
 
 	sol.solve()
 
 	sol.print_sol()
-
-
 
 
 if __name__ == "__main__":
