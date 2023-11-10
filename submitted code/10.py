@@ -1,5 +1,3 @@
-
-
 # class Class represent a class, contain ID, t: number of preiods, g: teacher ID, s: number of student
 class Class:
 	def __init__(self, ID, t, g, s):
@@ -22,9 +20,23 @@ class Room:
 	def __init__(self, ID, capacity):
 		self.ID = ID
 		self.capacity = capacity
+		
+		self.last_False = 1
 
 		# list of slot that this room being used
 		self.used = {slot: False for slot in range(1, 61)}
+	
+	def find_free(self):
+		temp = list(self.used.values())[::-1]
+
+		count = 0
+
+		for preiod in temp:
+			if preiod:
+				return count
+			count += 1
+		
+		return count
 
 class Teacher:
 	def __init__(self, ID):
@@ -32,6 +44,18 @@ class Teacher:
 
 		# list of slot that this teacher teach
 		self.used = {slot: False for slot in range(1, 61)}
+	
+	def find_free(self):
+		temp = list(self.used.values())[::-1]
+
+		count = 0
+
+		for preiod in temp:
+			if preiod:
+				return count
+			count += 1
+		
+		return count
 	
 	def __str__(self):
 		return f'Teacher {self.ID}'
@@ -55,10 +79,13 @@ def import_data():
 
 
 	temp = list(map(int, input().split()))
+	
 	for i, capacity in enumerate(temp):
 		rooms.append(Room(i+1, capacity))
 
 	return classes, teachers, rooms
+
+		
 
 
 # Solver class to solve the problem
@@ -75,8 +102,7 @@ class Solver:
 			for room in self.rooms:
 				if room.capacity >= c.s:
 					c.rooms.append(room)
-			
-	
+
 	# main solve function
 	'''
 	Heuristic:
@@ -88,25 +114,29 @@ class Solver:
 	def solve(self):
 		self.find_possible_rooms()
 
-		self.classes.sort(key=lambda x: [len(x.rooms)])
+
+		self.classes.sort(key=lambda x: [x.t])
+
 		rclass = []
 		for c in self.classes:
 			for slot in range(1, 61):
 				if slot + c.t > 61:
 					continue
+
 				
 				for room in c.rooms:
-					check = True
+					
 					for preiod in range(slot, slot + c.t):
 						if room.used[preiod] == True or self.teachers[c.g].used[preiod]:
-							check = False 
 							break
+					else:
 
-					if check:
 						c.sol = [slot, room.ID]
 						for preiod in range(slot, c.t + slot):
 							room.used[preiod] = True
 							self.teachers[c.g].used[preiod] = True
+
+						room.last_False = c.t + slot
 						
 						break 
 				
@@ -115,7 +145,7 @@ class Solver:
 			
 			if c.sol == []:
 				rclass.append(c)
-		
+
 		for c in rclass:
 			self.classes.remove(c)
 		
@@ -131,7 +161,7 @@ class Solver:
 		print(len(self.classes))
 		for c in self.classes:
 			print(c.ID, *c.sol)
-		
+
 
 def main():
 	classes, teachers, rooms = import_data()
