@@ -10,8 +10,8 @@ struct Data{
 	int container_index, x, y, rotation;
 	vector<pair<int, int>>::iterator pos;
 
-	Data(int containerindex, int x, int y, int rotation, vector<pair<int, int>>::iterator p){
-		this->container_index = containerindex;
+	Data(int container_index, int x, int y, int rotation, vector<pair<int, int>>::iterator p){
+		this->container_index = container_index;
 		this->x = x; 
 		this->y = y; 
 		this->rotation = rotation; 
@@ -39,7 +39,6 @@ struct Box{
 	int truck;
 	int x, y;
 	bool rotation = false;
-	bool visited = false;
 };
 
 
@@ -95,8 +94,8 @@ void Container_Insert_box(Box &box, Container &container, int x, int y, bool rot
 	container.boxes_pos.pb({x, y+h});
 	container.boxes_pos.pb({x+w, y});
 	container.boxes.pb(box.ID);
+
 	box.truck = container.ID;
-	box.visited = true;
 }
 
 bool Container_check_box(Box &box, Container &container, int x, int y, bool rotation){
@@ -133,68 +132,69 @@ Data find_best_container(Box &box, bool used){
 	int best_container_index = -1;
 	int min_cost = INF;
 
+	// don't know why x + y work here but who care :D, it's worked
+	int sum_XY = -1;
 
-	for(auto &container: containers){
-		if (container.used){
-			for(vector<pair<int, int>>::iterator pos = container.boxes_pos.begin(); pos != container.boxes_pos.end(); pos++){
+
+	for (int i = 0; i < containers.size(); i++){
+		if (containers[i].used == used){
+			for(vector<pair<int, int>>::iterator pos = containers[i].boxes_pos.begin(); pos != containers[i].boxes_pos.end(); pos++){
 				for(int rotation = 0; rotation <= 1; rotation++){
-					if(Container_check_box(box, container, pos->first, pos->second,rotation)){
-						if(min_cost > container.cost){
-							min_cost = container.cost;
-							best_container_index = container.ID;
+					if(Container_check_box(box, containers[i], pos->first, pos->second,rotation)){
+						if(containers[i].cost < min_cost || containers[i].cost == min_cost && pos->first + pos->second < sum_XY){
+							min_cost = containers[i].cost;
+							best_container_index = i;
 							best_rotation = rotation;
 							best_pos = pos;
 							best_x = pos->first;
 							best_y = pos->second;
+							sum_XY = best_x + best_y;
 						}
 					}
 				}
+			}
+
+			if (containers[i].cost >= min_cost){
+				break;
 			}
 		}
 	}
 
 	if (min_cost != INF){
-		Data sel(best_container_index, best_x, best_y, best_rotation, best_pos);
-		return sel;
+		return Data(best_container_index, best_x, best_y, best_rotation, best_pos);
 	}
-
-	for(auto &container: containers){
-		if (container.used){
-			continue;
-		}
-		for(vector<pair<int, int>>::iterator pos = container.boxes_pos.begin(); pos != container.boxes_pos.end(); pos++){
-			for(int rotation = 0; rotation <= 1; rotation++){
-				if(Container_check_box(box, container, pos->first, pos->second,rotation)){
-					if(min_cost > container.cost){
-						min_cost = container.cost;
-						best_container_index = container.ID;
-						best_rotation = rotation;
-						best_pos = pos;
-						best_x = pos->first;
-						best_y = pos->second;
-					}
-				}
-
-			}
-		}
-	}
-
-	Data sel(best_container_index, best_x, best_y, best_rotation, best_pos);
-	return sel;
+	return find_best_container(box, false);
 
 }
 
 
 void solve(){
+	sort(containers.begin(), containers.end(), [&](Container x, Container y){
+		if (x.cost < y.cost){
+			return true;
+		}
+		else if (x.cost == y.cost && x.ID < y.ID){
+			return true;
+		}
+		return false;
+	});
+
+
+
+	// sort(boxes.begin(), boxes.end(), [&](Box x, Box y){
+	// 	return x.x * x.y < y.x * y.y;
+	// });
+
+
 	for(auto &box: boxes){
 
 		Data data = find_best_container(box, true);
 
-		containers[data.container_index-1].boxes_pos.erase(data.pos);
+		containers[data.container_index].boxes_pos.erase(data.pos);
 
-		Container_Insert_box(box, containers[data.container_index-1], data.x, data.y, data.rotation);
+		Container_Insert_box(box, containers[data.container_index], data.x, data.y, data.rotation);
 
-		containers[data.container_index-1].used = true;
+		containers[data.container_index].used = true;
 
 	}
 }
@@ -207,8 +207,6 @@ void print_sol(){
 
 int main(){
 	import_data();
-
 	solve();
-	
 	print_sol();
 }
