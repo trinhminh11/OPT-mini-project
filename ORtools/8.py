@@ -1,8 +1,14 @@
+"""Solves a flexible jobshop problems with the CP-SAT solver.
 
-import collections
+A jobshop is a standard scheduling problem when you must sequence a
+series of task_types on a set of machines. Each job contains one task_type per
+machine. The order of execution and the length of each job on each
+machine is task_type dependent.
+
+"""
+
 
 from ortools.sat.python import cp_model
-
 
 # Teacher class represent a Teacher, contain ID and all subjects of that teacher
 class Teacher:
@@ -63,7 +69,6 @@ def find_possible_teachers(classes: list[Class], teachers: list[Teacher]):
 		
 
 
-# import data, if file == False, read input, read file otherwise
 def import_data():
 	classes: list[Class] = []
 	teachers: list[Teacher] = []
@@ -90,11 +95,13 @@ def import_data():
 	subjects = {i+1: temp[i] for i in range(M)}
 	find_possible_teachers(classes, teachers)
 
+
 	return classes, teachers, subjects
 
 
+
 class Solver:
-	def __init__(self, classes: list[Class], teachers: list[Teacher], subjects: list[int]):
+	def __init__(self, classes, teachers, subjects):
 		self.classes = classes
 		self.teachers = teachers
 		self.subjects = subjects
@@ -106,9 +113,7 @@ class Solver:
 			[
 				[
 					(self.subjects[subject], teacher.ID-1) for teacher in c.teachers[subject]
-				] if c.teachers[subject] 
-				else [(0, -1)] 
-				for subject in c.subjects
+				] if c.teachers[subject] else [(0, -1)] for subject in c.subjects
 			] for c in self.classes
 		]
 		
@@ -137,10 +142,14 @@ class Solver:
 
 
 		# Global storage of variables.
-		intervals_per_resources = collections.defaultdict(list)
+		intervals_per_resources = {}
 		self.starts = {}  # indexed by (job_id, task_id).
 		self.presences = {}  # indexed by (job_id, task_id, alt_id).
 		job_ends = []
+
+
+		used = [[model.NewBoolVar(f'used {job_id} {task_id}') for task_id in range(len(self.jobs[job_id]))] for job_id in all_jobs]
+
 
 		# Scan the jobs and create the relevant variables and intervals.
 		for job_id in all_jobs:
@@ -148,7 +157,6 @@ class Solver:
 			num_tasks = len(job)
 			previous_end = None
 			for task_id in range(num_tasks):
-
 
 				task = job[task_id]
 
@@ -165,13 +173,19 @@ class Solver:
 
 				# Create main interval for the task.
 				suffix_name = '_j%i_t%i' % (job_id, task_id)
-				start = model.NewIntVar(0, 59, 'start' + suffix_name)
+				start = model.NewIntVar(0, horizon, 'start' + suffix_name)
 				duration = model.NewIntVar(min_duration, max_duration,
 										'duration' + suffix_name)
-				end = model.NewIntVar(0, 59, 'end' + suffix_name)
+				end = model.NewIntVar(0, horizon, 'end' + suffix_name)
 				interval = model.NewIntervalVar(start, duration, end,
 												'interval' + suffix_name)
 
+
+				if task[0][1] != -1:
+					model.Add(end < 60).OnlyEnforceIf(used[job_id][task_id])
+					model.Add(end >= 60).OnlyEnforceIf(used[job_id][task_id].Not())
+				else:
+					model.Add(used[job_id][task_id] == False)
 
 				# Store the start for the solution.
 				self.starts[(job_id, task_id)] = start
@@ -201,6 +215,8 @@ class Solver:
 						model.Add(end == l_end).OnlyEnforceIf(l_presence)
 
 						# Add the local interval to the right machine.
+						if task[alt_id][1] not in intervals_per_resources.keys():
+							intervals_per_resources[task[alt_id][1]] = []
 						intervals_per_resources[task[alt_id][1]].append(l_interval)
 
 						# Store the presences for the solution.
@@ -209,6 +225,8 @@ class Solver:
 					# Select exactly one presence variable.
 					model.AddExactlyOne(l_presences)
 				else:
+					if task[0][1] not in intervals_per_resources.keys():
+						intervals_per_resources[task[0][1]] = []
 					intervals_per_resources[task[0][1]].append(interval)
 					self.presences[(job_id, task_id, 0)] = model.NewConstant(1)
 
@@ -219,10 +237,8 @@ class Solver:
 			if len(intervals) > 1:
 				model.AddNoOverlap(intervals)
 
-		# Makespan objective
-		makespan = model.NewIntVar(0, horizon, 'makespan')
-		model.AddMaxEquality(makespan, job_ends)
-		model.Minimize(makespan)
+
+		model.Maximize(sum([sum(used[job_id]) for job_id in all_jobs]))
 
 		# Solve model.
 		self.solver = cp_model.CpSolver()
@@ -241,20 +257,25 @@ class Solver:
 					if self.solver.Value(self.presences[(job_id, task_id, alt_id)]):
 						machine = self.jobs[job_id][task_id][alt_id][1]
 				if machine != -1:
-					ans += f'{job_id+1} {self.classes[job_id].subjects[task_id]} {start_value+1} {machine+1}\n'
-					K += 1
+					if start_value + self.subjects[self.classes[job_id].subjects[task_id]] <= 60:
+						ans += f'{job_id+1} {self.classes[job_id].subjects[task_id]} {start_value+1} {machine+1}\n'
+						K += 1
 		print(K)
 		print(ans)
 	
 
+# inp = file, if inp = False, => reading from input, out is output file, is_print: if print to console
 def main():
 	classes, teachers, subjects = import_data()
+	
 	sol = Solver(classes, teachers, subjects)
 
 	sol.solve()
 
 	sol.print_sol()
+
 	
 
 if __name__ == "__main__":
+
 	main()
