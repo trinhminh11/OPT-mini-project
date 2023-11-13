@@ -102,7 +102,6 @@ def main():
 
 	sol.print_sol()
 
-	# sol.export_sol(out)
 
 if __name__ == "__main__":
 	main()
