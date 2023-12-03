@@ -29,7 +29,7 @@ class Solver:
 	def solve(self):
 		self.find_possible_rooms()
 
-		self.classes.sort(key=lambda x: [len(x.rooms)])
+		self.classes.sort(key=lambda x: [x.t])
 		rclass = []
 		for c in self.classes:
 			for slot in range(1, 61):
