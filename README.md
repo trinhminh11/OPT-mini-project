@@ -8,7 +8,7 @@ Folder "submitted code", just like the name, the submitted version that I can en
 
 Folder "ORtools", this folder solves the Problems using CP, A lot of them can be improved by using LP, but I'm happy for now.
 
-About the 1st and 2nd Projects, the checker of the website is BUG so I have not posted my submitted code for those yet.
+About the  2nd Project, the checker of the website is BUG so I have not posted my submitted code for those yet.
 
 And about the 3rd and 9th Projects (and maybe more :> ), there is a BUG that if your solution is better than the web, you'll get full points but if not, it'll raise an Invalid Response message, so don't worry that your code is not work, it just that your solution to some task is not surpass the web's solution.
 
