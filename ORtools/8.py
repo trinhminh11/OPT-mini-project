@@ -247,10 +247,7 @@ class Solver:
 
 		self.solver.parameters.max_time_in_seconds = 298
 
-
-		status = self.solver.Solve(model)
-
-		print(status == cp_model.OPTIMAL)
+		self.solver.Solve(model)
 
 	def print_sol(self):
 		ans = ''
