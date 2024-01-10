@@ -124,6 +124,9 @@ class Solver:
 					# out of range
 					if slot + self.subjects[subject] > 61:
 						break
+
+					if (slot-1) // 6 < (slot + self.subjects[subject]-2) // 6:
+						continue
 					
 					# loop through each teacher
 					for teacher in c.teachers[subject]:

@@ -123,7 +123,9 @@ class Solver:
 				if slot + c.t > 61:
 					continue
 
-				
+				if (slot-1) // 6 < (slot + c.t-2) // 6:
+					continue
+
 				for room in c.rooms:
 					
 					for preiod in range(slot, slot + c.t):
