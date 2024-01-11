@@ -147,11 +147,15 @@ class Solver:
 			if len(intervals) > 1:
 				model.AddNoOverlap(intervals)
 
+
 			
 		model.Maximize(sum(self.presences.values()))
 
+
 		# Solve model.
 		self.solver = cp_model.CpSolver()
+
+		self.solver.parameters.max_time_in_seconds = 298
 
 		self.solver.Solve(model)
 
